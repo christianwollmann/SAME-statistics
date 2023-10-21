@@ -1,0 +1,36 @@
+---
+title: "Untitled"
+author: "Christian"
+date: "2023-10-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 5.2 What are assumptions?
+
+In statistical analysis, all parametric tests rely on specific data characteristics, which, if not met, can alter the research findings and the way results are interpreted.The mandatory condition that the data meet this requirement constitutes an assumption.
+
+## 5.3 Assumptions of parametric data
+
+A parametric test is one that requires data from one of the large catalogue of distributions that statisticians have described, and for data to be parametric certain assumptions must be true:
+
+-   **normally distributed data** (e.g. symmetry, unimodality, bell-shaped form, AUC=1)
+
+-   **homogenity of variance** (dispersion of data points around regression line or mean value is consistent)
+
+-   **interval data**
+
+-   **independence** (between-subject design: each participants data does not influence other participants; within subject design: no independent data within one subject, but between subjects)
+
+#5.3 packages used in this chapter
+
+```{r}
+library(car)
+library(ggplot2)
+library(pastecs)
+library(psych)
+library(Rcmdr)
+```
