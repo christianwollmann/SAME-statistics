@@ -5,15 +5,11 @@ date: "2023-10-21"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## 5.2 What are assumptions?
+## 1. What are assumptions?
 
 In statistical analysis, all parametric tests rely on specific data characteristics, which, if not met, can alter the research findings and the way results are interpreted.The mandatory condition that the data meet this requirement constitutes an assumption.
 
-## 5.3 Assumptions of parametric data
+## 2. Assumptions of parametric data
 
 A parametric test is one that requires data from one of the large catalogue of distributions that statisticians have described, and for data to be parametric certain assumptions must be true:
 
@@ -25,12 +21,154 @@ A parametric test is one that requires data from one of the large catalogue of d
 
 -   **independence** (between-subject design: each participants data does not influence other participants; within subject design: no independent data within one subject, but between subjects)
 
-#5.3 packages used in this chapter
+## 3. The assumption of normality
 
-```{r}
-library(car)
-library(ggplot2)
-library(pastecs)
-library(psych)
-library(Rcmdr)
-```
+Prerequisities of the distribution differs depending on the the statistical tests. For example, if we need a bell-shaped normal distribution (e.g. for a t-test), the larger the data set, the more likely it is to be present (at least n=30, central limit theorem). For GLM (General Linear Models, e.g. regression) we have to assume that the errors are distributed normally.
+
+### 3.1 Visual inspection
+
+To define if it is a normal distribution, we can visually inspect the data in a frequency distribution. We can create the distribution with the function **ggplot2.**
+
+The ggplot2 tool offers the possibility to plot a line over the existing distribution that describes a normal distribution. Based on this we can decide if the data meets the requirements (visually).
+
+Furthermore, we can create a **Q-Q plot**. This graph plots the cumulative values we have in our data against the cumulative probability of a particular distribution. If the data are normally distributed, then the observed values (dots on the chart) should fall exactly along a straight line. Any deviation of the dots from the line represents a deviation from normality.
+
+If our analysis involves **comparing groups**, then what's important is not the overall distribution but the distribution in each group. In this case, we can still use the **ggplot()** function, but we need to define a factor variable defining subsampling. Therefore we can use the function **subset()** and apply it to ggplot(). After the subsampling is applied (a new dataframe is being created) as follows, we can use our "normal" ggplot() command.
+
+### subsample\<-subset(df, df\$FactorVariable=="Factor Characteristic")
+
+### 3.2 Quantifying normality with numbers
+
+To quantify if our data fit a normal distribution, we can use the functions stat.desc() and describe() from the psych package.
+
+### stat.desc(variable name, basic = TRUE, norm = FALSE)
+
+### describe(df\$variable)
+
+The function gives a multiple output. Most important for checking the normal distribution are the **standardized values** of skew and kurtosis, and the result of the Shapiro-Wilk test.
+
+-   skew: indicates how asymmetric or skewed the distribution is
+
+    -   \>0: too many low scores in the distribution ("linkssteil und rechtsschief")
+
+    -   \<0: too many high scores in the distribution "linksschief und rechtssteil")
+
+        -   visual observation in QQ-plots: S-shaped curve not fitting the line -\> different skewness to normal distribution
+
+-   kurtosis: measures the shape of the distribution with respect to its edges and whether the maximum is flat or pointed
+
+    -   \>0: pointy and heavy tailed distribution
+
+    -   \<0: flat and light tailed distribution
+
+        -   visual observation in QQ-plots:: data consistently above or under the line -\> different curtosis to normal distribution
+
+-   **shapiro.test(variable)**
+
+    -   Shapiro-Wilk test: p-values significant -\> no normal distribution
+
+If we are analyzing **different and independent groups** it is important to test each groups distribution for normality individually. If we tested the overall sample, group differences could lead to distortions like bimodal distributions.
+
+Therefore we can use the function by() that is then connected to describe() or stat.desc()
+
+### by(data = dataFrame, INDICES = grouping variable, FUN = describe)
+
+### by(data = dataFrame, INDICES = grouping variable, FUN = stat.desc)
+
+## 4. Testing for homogenecity of variance
+
+Through all levels of a variable, the variance should not change.
+
+-   For grouped data, the assumption is that the variance of the outcome variable(s) should be consistent across all groups.
+
+-   For continuous data, such as in correlational designs, the assumption is that the variance of one variable should remain stable at all levels of the other variable.
+
+### 4.1 Levence´s test for comparing group variance
+
+Visual testing of variance homogenecity is vulnerable to error. Therefore one should use objective mathematical tests, as the Levence´s test. This is basically a one-way ANOVA conducted on the deviation scores. If the test is significant, the assumption is violated. If Levene's test is significant (Pr (\>F) in the R output is less than .05) then the variances are significantly different in different groups.
+
+In R, the test can be performed with the R-Commander, see p.200 or normally, via the console, included in the car package. Here, we need to define the outcome variable and a factor/group variable.
+
+#### leveneTest(outcome variable, group, center = median/mean)
+
+Warning: In large samples Levene's test can be significant even when group variances are not very different. Therefore, it should be interpreted in conjunction with the variance ratio.
+
+### 4.2 Hartley´s Fmax: the variance ratio
+
+If the sample is too large, tests as described before can be significant, even though variance homogenecity exists. Hartley´s Fmax tests the variance ratio, which is the largest group variance divided by the smallest. The critical values defining if the assumption is fulfilled depend on the degrees of freedom (df)
+
+## 5. Correcting problems in the data
+
+### 5.1 Outliers
+
+Options to deal with detected outliers:
+
+-   remove the cases - only if a good reason exists!
+
+-   transform the data
+
+-   change the score - if transformation fails
+
+    -   change the score to be one unit above the next highest score in the dataset
+
+    -   convert back from a z-score
+
+    -   the mean plus two standard deviations
+
+### 5.2 Dealing with non-normality and unequal variances
+
+#### Transforming data
+
+The idea behind transformations is that you do something to every score to correct for distributional problems, outliers or unequal variances. This does not change the relations between variables.
+
+Careful: If you are comparing groups (or different datasets in general), every subset of data has to be transformed that comparability is still guaranteed!
+
+#### Choosing a transformation
+
+trial and error!
+
+### 5.3 Transforming the data using
+
+#### computing new variables
+
+only two general commands are required in R:
+
+-   newVariable \<- function(oldVariable)
+
+    -   log() - if there are variables with the value 0, add +1
+
+    -   sqrt() - square root transformation
+
+    -   1/() - reciprocal transformation (more like an arithmetic expression)
+
+    -   ifelse(a conditional argument, what happens if the argument is TRUE, what happens if the argument if FALSE) - creates new variable containing all cases for which argument is true
+
+-   newVarielse() - able \<- arithmetic with oldVariable(s)
+
+    -   Addition +
+
+    -   Subtraction -
+
+    -   Exponentation \*\* OR \^x
+
+    -   Less than \<; greater than \>; less than or equal to \<=; greater than or equal to \>=
+
+    -   double equals ==
+
+    -   not equal to !=
+
+### The effect of transformations
+
+Mainly, transformations reduce the expression of the violation of the assumptions. When transforming distributions that are already normally distributed, it can lead to slight violations of the assumptions.
+
+Therefore, it is important to find a trade-off to decide whether it makes sense to perform a transformation. This is mostly a trial-and-error process.
+
+### 5.4 When it all goes horribly wrong
+
+If transformation does not work, parametric tests can be used.
+
+Otherwise, so-called robust methods can be used. Some of these procedures use a trimmed mean. A trimmed mean is simply a mean based on the distribution of scores after some percentage of scores has been removed from each extreme of the distribution.
+
+A similar robust measure of location is an M-estimator, which differs from a trimmed mean in that the amount of trimming is determined empirically. In other words, rather than the researcher deciding before the analysis how much of the data to trim, an Mestimator determines the optimal amount of trimming necessary to give a robust estimate of, say, the mean.
+
+Furthermore, subsampling methods such as cross-validation and bootstrapping can be used. Here, randomized samples are taken from the existing data set and thus a new distribution with more values is created. In this way, larger distributions can be simulated, thus meeting the requirements.
