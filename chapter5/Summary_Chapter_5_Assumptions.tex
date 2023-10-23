@@ -1,0 +1,407 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Summary Chapter 5},
+  pdfauthor={Christian},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Summary Chapter 5}
+\author{Christian}
+\date{2023-10-21}
+
+\begin{document}
+\maketitle
+
+\hypertarget{what-are-assumptions}{%
+\subsection{1. What are assumptions?}\label{what-are-assumptions}}
+
+In statistical analysis, all parametric tests rely on specific data
+characteristics, which, if not met, can alter the research findings and
+the way results are interpreted.The mandatory condition that the data
+meet this requirement constitutes an assumption.
+
+\hypertarget{assumptions-of-parametric-data}{%
+\subsection{2. Assumptions of parametric
+data}\label{assumptions-of-parametric-data}}
+
+A parametric test is one that requires data from one of the large
+catalogue of distributions that statisticians have described, and for
+data to be parametric certain assumptions must be true:
+
+\begin{itemize}
+\item
+  \textbf{normally distributed data} (e.g.~symmetry, unimodality,
+  bell-shaped form, AUC=1)
+\item
+  \textbf{homogenity of variance} (dispersion of data points around
+  regression line or mean value is consistent)
+\item
+  \textbf{interval data}
+\item
+  \textbf{independence} (between-subject design: each participants data
+  does not influence other participants; within subject design: no
+  independent data within one subject, but between subjects)
+\end{itemize}
+
+\hypertarget{the-assumption-of-normality}{%
+\subsection{3. The assumption of
+normality}\label{the-assumption-of-normality}}
+
+Prerequisities of the distribution differs depending on the the
+statistical tests. For example, if we need a bell-shaped normal
+distribution (e.g.~for a t-test), the larger the data set, the more
+likely it is to be present (at least n=30, central limit theorem). For
+GLM (General Linear Models, e.g.~regression) we have to assume that the
+errors are distributed normally.
+
+\hypertarget{visual-inspection}{%
+\subsubsection{3.1 Visual inspection}\label{visual-inspection}}
+
+To define if it is a normal distribution, we can visually inspect the
+data in a frequency distribution. We can create the distribution with
+the function \textbf{ggplot2.}
+
+The ggplot2 tool offers the possibility to plot a line over the existing
+distribution that describes a normal distribution. Based on this we can
+decide if the data meets the requirements (visually).
+
+Furthermore, we can create a \textbf{Q-Q plot}. This graph plots the
+cumulative values we have in our data against the cumulative probability
+of a particular distribution. If the data are normally distributed, then
+the observed values (dots on the chart) should fall exactly along a
+straight line. Any deviation of the dots from the line represents a
+deviation from normality.
+
+If our analysis involves \textbf{comparing groups}, then what's
+important is not the overall distribution but the distribution in each
+group. In this case, we can still use the \textbf{ggplot()} function,
+but we need to define a factor variable defining subsampling. Therefore
+we can use the function \textbf{subset()} and apply it to ggplot().
+After the subsampling is applied (a new dataframe is being created) as
+follows, we can use our ``normal'' ggplot() command.
+
+\hypertarget{subsample-subsetdf-dffactorvariablefactor-characteristic}{%
+\subsubsection{subsample\textless-subset(df,
+df\$FactorVariable==``Factor
+Characteristic'')}\label{subsample-subsetdf-dffactorvariablefactor-characteristic}}
+
+\hypertarget{quantifying-normality-with-numbers}{%
+\subsubsection{3.2 Quantifying normality with
+numbers}\label{quantifying-normality-with-numbers}}
+
+To quantify if our data fit a normal distribution, we can use the
+functions stat.desc() and describe() from the psych package.
+
+\hypertarget{stat.descvariable-name-basic-true-norm-false}{%
+\subsubsection{stat.desc(variable name, basic = TRUE, norm =
+FALSE)}\label{stat.descvariable-name-basic-true-norm-false}}
+
+\hypertarget{describedfvariable}{%
+\subsubsection{describe(df\$variable)}\label{describedfvariable}}
+
+The function gives a multiple output. Most important for checking the
+normal distribution are the \textbf{standardized values} of skew and
+kurtosis, and the result of the Shapiro-Wilk test.
+
+\begin{itemize}
+\item
+  skew: indicates how asymmetric or skewed the distribution is
+
+  \begin{itemize}
+  \item
+    \textgreater0: too many low scores in the distribution (``linkssteil
+    und rechtsschief'')
+  \item
+    \textless0: too many high scores in the distribution ``linksschief
+    und rechtssteil'')
+
+    \begin{itemize}
+    \tightlist
+    \item
+      visual observation in QQ-plots: S-shaped curve not fitting the
+      line -\textgreater{} different skewness to normal distribution
+    \end{itemize}
+  \end{itemize}
+\item
+  kurtosis: measures the shape of the distribution with respect to its
+  edges and whether the maximum is flat or pointed
+
+  \begin{itemize}
+  \item
+    \textgreater0: pointy and heavy tailed distribution
+  \item
+    \textless0: flat and light tailed distribution
+
+    \begin{itemize}
+    \tightlist
+    \item
+      visual observation in QQ-plots:: data consistently above or under
+      the line -\textgreater{} different curtosis to normal distribution
+    \end{itemize}
+  \end{itemize}
+\item
+  \textbf{shapiro.test(variable)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Shapiro-Wilk test: p-values significant -\textgreater{} no normal
+    distribution
+  \end{itemize}
+\end{itemize}
+
+If we are analyzing \textbf{different and independent groups} it is
+important to test each groups distribution for normality individually.
+If we tested the overall sample, group differences could lead to
+distortions like bimodal distributions.
+
+Therefore we can use the function by() that is then connected to
+describe() or stat.desc()
+
+\hypertarget{bydata-dataframe-indices-grouping-variable-fun-describe}{%
+\subsubsection{by(data = dataFrame, INDICES = grouping variable, FUN =
+describe)}\label{bydata-dataframe-indices-grouping-variable-fun-describe}}
+
+\hypertarget{bydata-dataframe-indices-grouping-variable-fun-stat.desc}{%
+\subsubsection{by(data = dataFrame, INDICES = grouping variable, FUN =
+stat.desc)}\label{bydata-dataframe-indices-grouping-variable-fun-stat.desc}}
+
+\hypertarget{testing-for-homogenecity-of-variance}{%
+\subsection{4. Testing for homogenecity of
+variance}\label{testing-for-homogenecity-of-variance}}
+
+Through all levels of a variable, the variance should not change.
+
+\begin{itemize}
+\item
+  For grouped data, the assumption is that the variance of the outcome
+  variable(s) should be consistent across all groups.
+\item
+  For continuous data, such as in correlational designs, the assumption
+  is that the variance of one variable should remain stable at all
+  levels of the other variable.
+\end{itemize}
+
+\hypertarget{levences-test-for-comparing-group-variance}{%
+\subsubsection{4.1 Levence´s test for comparing group
+variance}\label{levences-test-for-comparing-group-variance}}
+
+Visual testing of variance homogenecity is vulnerable to error.
+Therefore one should use objective mathematical tests, as the Levence´s
+test. This is basically a one-way ANOVA conducted on the deviation
+scores. If the test is significant, the assumption is violated. If
+Levene's test is significant (Pr (\textgreater F) in the R output is
+less than .05) then the variances are significantly different in
+different groups.
+
+In R, the test can be performed with the R-Commander, see p.200 or
+normally, via the console, included in the car package. Here, we need to
+define the outcome variable and a factor/group variable.
+
+\hypertarget{levenetestoutcome-variable-group-center-medianmean}{%
+\paragraph{leveneTest(outcome variable, group, center =
+median/mean)}\label{levenetestoutcome-variable-group-center-medianmean}}
+
+Warning: In large samples Levene's test can be significant even when
+group variances are not very different. Therefore, it should be
+interpreted in conjunction with the variance ratio.
+
+\hypertarget{hartleys-fmax-the-variance-ratio}{%
+\subsubsection{4.2 Hartley´s Fmax: the variance
+ratio}\label{hartleys-fmax-the-variance-ratio}}
+
+If the sample is too large, tests as described before can be
+significant, even though variance homogenecity exists. Hartley´s Fmax
+tests the variance ratio, which is the largest group variance divided by
+the smallest. The critical values defining if the assumption is
+fulfilled depend on the degrees of freedom (df)
+
+\hypertarget{correcting-problems-in-the-data}{%
+\subsection{5. Correcting problems in the
+data}\label{correcting-problems-in-the-data}}
+
+\hypertarget{outliers}{%
+\subsubsection{5.1 Outliers}\label{outliers}}
+
+Options to deal with detected outliers:
+
+\begin{itemize}
+\item
+  remove the cases - only if a good reason exists!
+\item
+  transform the data
+\item
+  change the score - if transformation fails
+
+  \begin{itemize}
+  \item
+    change the score to be one unit above the next highest score in the
+    dataset
+  \item
+    convert back from a z-score
+  \item
+    the mean plus two standard deviations
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{dealing-with-non-normality-and-unequal-variances}{%
+\subsubsection{5.2 Dealing with non-normality and unequal
+variances}\label{dealing-with-non-normality-and-unequal-variances}}
+
+\hypertarget{transforming-data}{%
+\paragraph{Transforming data}\label{transforming-data}}
+
+The idea behind transformations is that you do something to every score
+to correct for distributional problems, outliers or unequal variances.
+This does not change the relations between variables.
+
+Careful: If you are comparing groups (or different datasets in general),
+every subset of data has to be transformed that comparability is still
+guaranteed!
+
+\hypertarget{choosing-a-transformation}{%
+\paragraph{Choosing a transformation}\label{choosing-a-transformation}}
+
+trial and error!
+
+\hypertarget{transforming-the-data-using}{%
+\subsubsection{5.3 Transforming the data
+using}\label{transforming-the-data-using}}
+
+\hypertarget{computing-new-variables}{%
+\paragraph{computing new variables}\label{computing-new-variables}}
+
+only two general commands are required in R:
+
+\begin{itemize}
+\item
+  newVariable \textless- function(oldVariable)
+
+  \begin{itemize}
+  \item
+    log() - if there are variables with the value 0, add +1
+  \item
+    sqrt() - square root transformation
+  \item
+    1/() - reciprocal transformation (more like an arithmetic
+    expression)
+  \item
+    ifelse(a conditional argument, what happens if the argument is TRUE,
+    what happens if the argument if FALSE) - creates new variable
+    containing all cases for which argument is true
+  \end{itemize}
+\item
+  newVarielse() - able \textless- arithmetic with oldVariable(s)
+
+  \begin{itemize}
+  \item
+    Addition +
+  \item
+    Subtraction -
+  \item
+    Exponentation ** OR \^{}x
+  \item
+    Less than \textless; greater than \textgreater; less than or equal
+    to \textless=; greater than or equal to \textgreater=
+  \item
+    double equals ==
+  \item
+    not equal to !=
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{the-effect-of-transformations}{%
+\subsubsection{The effect of
+transformations}\label{the-effect-of-transformations}}
+
+Mainly, transformations reduce the expression of the violation of the
+assumptions. When transforming distributions that are already normally
+distributed, it can lead to slight violations of the assumptions.
+
+Therefore, it is important to find a trade-off to decide whether it
+makes sense to perform a transformation. This is mostly a
+trial-and-error process.
+
+\hypertarget{when-it-all-goes-horribly-wrong}{%
+\subsubsection{5.4 When it all goes horribly
+wrong}\label{when-it-all-goes-horribly-wrong}}
+
+If transformation does not work, parametric tests can be used.
+
+Otherwise, so-called robust methods can be used. Some of these
+procedures use a trimmed mean. A trimmed mean is simply a mean based on
+the distribution of scores after some percentage of scores has been
+removed from each extreme of the distribution.
+
+A similar robust measure of location is an M-estimator, which differs
+from a trimmed mean in that the amount of trimming is determined
+empirically. In other words, rather than the researcher deciding before
+the analysis how much of the data to trim, an Mestimator determines the
+optimal amount of trimming necessary to give a robust estimate of, say,
+the mean.
+
+Furthermore, subsampling methods such as cross-validation and
+bootstrapping can be used. Here, randomized samples are taken from the
+existing data set and thus a new distribution with more values is
+created. In this way, larger distributions can be simulated, thus
+meeting the requirements.
+
+\end{document}
